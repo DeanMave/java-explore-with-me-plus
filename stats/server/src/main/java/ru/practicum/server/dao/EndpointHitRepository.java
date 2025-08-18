@@ -16,6 +16,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
             FROM EndpointHit e
             WHERE e.uri IN :uris AND e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
+            ORDER BY COUNT(DISTINCT e.ip) DESC
             """)
     List<ViewStatsDto> findUniqueStatsByUris(@Param("uris") List<String> uris, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
@@ -25,6 +26,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
             FROM EndpointHit e
             WHERE e.uri IN :uris AND e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
+            ORDER BY COUNT(e.ip) DESC
             """)
     List<ViewStatsDto> findAllStatsByUris(@Param("uris") List<String> uris, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
@@ -33,6 +35,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
             FROM EndpointHit e
             WHERE e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
+            ORDER BY COUNT(e.ip) DESC
             """)
     List<ViewStatsDto> findAllStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
@@ -41,6 +44,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
             FROM EndpointHit e
             WHERE e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
+            ORDER BY COUNT(DISTINCT e.ip) DESC
             """)
     List<ViewStatsDto> findAllUniqueStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
