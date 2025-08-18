@@ -1,8 +1,11 @@
 package ru.practicum.server.mapper;
 
 import dto.EndpointHitDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.server.model.EndpointHit;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EndpointHitMapper {
 
     public static EndpointHit toEntity(EndpointHitDto newEndpointHit) {

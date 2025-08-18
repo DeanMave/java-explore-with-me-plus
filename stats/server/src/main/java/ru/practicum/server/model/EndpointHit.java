@@ -2,17 +2,16 @@ package ru.practicum.server.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+@ToString
 public class EndpointHit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

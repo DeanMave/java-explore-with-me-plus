@@ -5,6 +5,7 @@ import dto.ViewStatsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.server.dao.EndpointHitRepository;
 import ru.practicum.server.model.EndpointHit;
 
@@ -22,7 +23,9 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
     private final EndpointHitRepository endpointHitRepository;
 
+
     @Override
+    @Transactional
     public EndpointHitDto save(final EndpointHitDto newEndpointHit) {
         log.debug("сохранение информации о запросе {}", newEndpointHit);
         final EndpointHit endpointHit = toEntity(newEndpointHit);
