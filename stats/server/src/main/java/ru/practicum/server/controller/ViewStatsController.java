@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.server.service.EndpointHitService;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class ViewStatsController {
     public List<ViewStatsDto> findStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                         @RequestParam(required = false) List<String> uris,
-                                        @RequestParam(defaultValue = "false") boolean unique){
+                                        @RequestParam(defaultValue = "false") boolean unique) {
         return endpointHitService.getStats(start, end, uris, unique);
     }
 }

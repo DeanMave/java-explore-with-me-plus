@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ErrorResponse handleIllegalArgument(final IllegalArgumentException exception){
+    public ErrorResponse handleIllegalArgument(final IllegalArgumentException exception) {
         log.warn("illegal argument", exception);
         return new ErrorResponse("illegal argument", exception.getMessage());
     }
