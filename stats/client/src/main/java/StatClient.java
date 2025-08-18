@@ -1,3 +1,5 @@
+import dto.EndpointHitDto;
+import dto.ViewStatsDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
