@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewEventDto {
-
     @NotBlank(message = "Поле annotation должно быть заполнено")
     @Size(min = 20, max = 2000, message = "Длина должна быть от 20 до 2000 символов")
     private String annotation;

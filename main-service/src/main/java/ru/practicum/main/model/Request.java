@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class Request {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
