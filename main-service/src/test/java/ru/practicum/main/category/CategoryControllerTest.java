@@ -40,7 +40,7 @@ public class CategoryControllerTest {
     @MockBean
     private CategoryService service;
 
-    private final Long EXISTING_CAT_ID = 1L;
+    private final Long existingCatId = 1L;
 
     private NewCategoryDto request;
 
@@ -53,7 +53,7 @@ public class CategoryControllerTest {
     //Успешное добавление
     @Test
     void addCategory_shouldReturnOkAndAddedCategory() throws Exception {
-        CategoryDto response = new CategoryDto(EXISTING_CAT_ID, "Test category");
+        CategoryDto response = new CategoryDto(existingCatId, "Test category");
 
         when(service.addCategory(any(NewCategoryDto.class)))
                 .thenReturn(response);
@@ -62,7 +62,7 @@ public class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(EXISTING_CAT_ID))
+                .andExpect(jsonPath("$.id").value(existingCatId))
                 .andExpect(jsonPath("$.name").value("Test category"));
     }
 
@@ -86,10 +86,10 @@ public class CategoryControllerTest {
     void deleteCategory_shouldReturnOk() throws Exception {
         doNothing().when(service).deleteCategory(anyLong());
 
-        mockMvc.perform(delete("/admin/categories/{catId}", EXISTING_CAT_ID))
+        mockMvc.perform(delete("/admin/categories/{catId}", existingCatId))
                 .andExpect(status().isOk());
 
-        verify(service, times(1)).deleteCategory(EXISTING_CAT_ID);
+        verify(service, times(1)).deleteCategory(existingCatId);
     }
 
     //Удаление - категория не найдена
@@ -98,10 +98,10 @@ public class CategoryControllerTest {
         doThrow(new NotFoundException("Категория не найдена или недоступна"))
                 .when(service).deleteCategory(anyLong());
 
-        mockMvc.perform(delete("/admin/categories/{catId}", EXISTING_CAT_ID))
+        mockMvc.perform(delete("/admin/categories/{catId}", existingCatId))
                 .andExpect(status().isNotFound());
 
-        verify(service, times(1)).deleteCategory(EXISTING_CAT_ID);
+        verify(service, times(1)).deleteCategory(existingCatId);
     }
 
     //Удаление - категория привязана к событию
@@ -110,10 +110,10 @@ public class CategoryControllerTest {
         doThrow(new ConflictException("Существуют события, связанные с категорией"))
                 .when(service).deleteCategory(anyLong());
 
-        mockMvc.perform(delete("/admin/categories/{catId}", EXISTING_CAT_ID))
+        mockMvc.perform(delete("/admin/categories/{catId}", existingCatId))
                 .andExpect(status().isConflict());
 
-        verify(service, times(1)).deleteCategory(EXISTING_CAT_ID);
+        verify(service, times(1)).deleteCategory(existingCatId);
     }
 
     //Тесты на обновление
@@ -125,11 +125,11 @@ public class CategoryControllerTest {
         when(service.updateCategory(any(NewCategoryDto.class), anyLong()))
                 .thenReturn(updatedCategoryDto);
 
-        mockMvc.perform(patch("/admin/categories/{catId}", EXISTING_CAT_ID)
+        mockMvc.perform(patch("/admin/categories/{catId}", existingCatId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedCategoryDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(EXISTING_CAT_ID))
+                .andExpect(jsonPath("$.id").value(existingCatId))
                 .andExpect(jsonPath("$.name").value(updatedCategoryDto.getName()));
 
         verify(service, times(1)).updateCategory(any(NewCategoryDto.class), anyLong());
@@ -143,7 +143,7 @@ public class CategoryControllerTest {
         doThrow(new NotFoundException("Категория не найдена или недоступна"))
                 .when(service).updateCategory(any(NewCategoryDto.class), anyLong());
 
-        mockMvc.perform(patch("/admin/categories/{catId}", EXISTING_CAT_ID)
+        mockMvc.perform(patch("/admin/categories/{catId}", existingCatId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
@@ -156,11 +156,11 @@ public class CategoryControllerTest {
     void updateCategory_shouldReturnConflict_whenNameNotUnique() throws Exception {
         doThrow(new ConflictException("Нарушение целостности данных"))
                 .when(service).updateCategory(any(NewCategoryDto.class), anyLong());
-        mockMvc.perform(patch("/admin/categories/{catId}", EXISTING_CAT_ID)
+        mockMvc.perform(patch("/admin/categories/{catId}", existingCatId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict());
-        verify(service, times(1)).updateCategory(any(NewCategoryDto.class), eq(EXISTING_CAT_ID));
+        verify(service, times(1)).updateCategory(any(NewCategoryDto.class), eq(existingCatId));
     }
 
     //Тесты на получение
@@ -202,17 +202,17 @@ public class CategoryControllerTest {
     //Успешное получение категории
     @Test
     void getCategory_shouldReturnOkAndCategory_whenCategoryExists() throws Exception {
-        CategoryDto response = new CategoryDto(EXISTING_CAT_ID, "Test category");
+        CategoryDto response = new CategoryDto(existingCatId, "Test category");
 
         when(service.getCategory(anyLong()))
                 .thenReturn(response);
 
-        mockMvc.perform(get("/categories/{catId}", EXISTING_CAT_ID))
+        mockMvc.perform(get("/categories/{catId}", existingCatId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(EXISTING_CAT_ID))
+                .andExpect(jsonPath("$.id").value(existingCatId))
                 .andExpect(jsonPath("$.name").value("Test category"));
 
-        verify(service, times(1)).getCategory(EXISTING_CAT_ID);
+        verify(service, times(1)).getCategory(existingCatId);
     }
 
     //Получение несуществующей категории
@@ -221,10 +221,10 @@ public class CategoryControllerTest {
         doThrow(new NotFoundException("Категория не найдена или недоступна"))
                 .when(service).getCategory(anyLong());
 
-        mockMvc.perform(get("/categories/{catId}", EXISTING_CAT_ID))
+        mockMvc.perform(get("/categories/{catId}", existingCatId))
                 .andExpect(status().isNotFound());
 
-        verify(service, times(1)).getCategory(EXISTING_CAT_ID);
+        verify(service, times(1)).getCategory(existingCatId);
     }
 
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.dto.request.category.NewCategoryDto;
@@ -41,12 +42,14 @@ public class CategoryController {
     //Методы администрирования
     //Добавление категории
     @PostMapping("/admin/categories")
+    @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {
         return service.addCategory(newCategoryDto);
     }
 
     //Удаление категории
     @DeleteMapping("/admin/categories/{catId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable @Positive Long catId) {
         service.deleteCategory(catId);
     }

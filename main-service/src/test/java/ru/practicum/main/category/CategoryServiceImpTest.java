@@ -33,8 +33,8 @@ public class CategoryServiceImpTest {
     @MockBean
     private CategoryRepository categoryRepository;
 
-    private final Long EXISTING_CAT_ID = 1L;
-    private final Long NON_EXISTENT_CAT_ID = 99L;
+    private final Long existingCatId = 1L;
+    private final Long nonExistentCatId = 99L;
 
     //Тесты на добавление
     @Test
@@ -64,34 +64,34 @@ public class CategoryServiceImpTest {
     //Успешное удаление
     @Test
     void deleteCategory_shouldDeleteCategory_whenCategoryExistsAndIsNotUsed() {
-        when(categoryRepository.existsById(EXISTING_CAT_ID)).thenReturn(true);
-        doNothing().when(categoryRepository).deleteById(EXISTING_CAT_ID);
+        when(categoryRepository.existsById(existingCatId)).thenReturn(true);
+        doNothing().when(categoryRepository).deleteById(existingCatId);
 
-        categoryService.deleteCategory(EXISTING_CAT_ID);
+        categoryService.deleteCategory(existingCatId);
 
-        verify(categoryRepository).existsById(EXISTING_CAT_ID);
-        verify(categoryRepository).deleteById(EXISTING_CAT_ID);
+        verify(categoryRepository).existsById(existingCatId);
+        verify(categoryRepository).deleteById(existingCatId);
     }
 
     //Удаление - не найдена категория
     @Test
     void deleteCategory_shouldThrowNotFoundException_whenCategoryDoesNotExist() {
-        when(categoryRepository.existsById(NON_EXISTENT_CAT_ID)).thenReturn(false);
+        when(categoryRepository.existsById(nonExistentCatId)).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> categoryService.deleteCategory(NON_EXISTENT_CAT_ID));
-        verify(categoryRepository).existsById(NON_EXISTENT_CAT_ID);
+        assertThrows(NotFoundException.class, () -> categoryService.deleteCategory(nonExistentCatId));
+        verify(categoryRepository).existsById(nonExistentCatId);
         verify(categoryRepository, never()).deleteById(anyLong());
     }
 
     //Удаление - категория привязана к событию
     @Test
     void deleteCategory_shouldThrowConflictException_whenCategoryIsRelatedToEvents() {
-        when(categoryRepository.existsById(EXISTING_CAT_ID)).thenReturn(true);
-        doThrow(DataIntegrityViolationException.class).when(categoryRepository).deleteById(EXISTING_CAT_ID);
+        when(categoryRepository.existsById(existingCatId)).thenReturn(true);
+        doThrow(DataIntegrityViolationException.class).when(categoryRepository).deleteById(existingCatId);
 
-        assertThrows(ConflictException.class, () -> categoryService.deleteCategory(EXISTING_CAT_ID));
-        verify(categoryRepository).existsById(EXISTING_CAT_ID);
-        verify(categoryRepository).deleteById(EXISTING_CAT_ID);
+        assertThrows(ConflictException.class, () -> categoryService.deleteCategory(existingCatId));
+        verify(categoryRepository).existsById(existingCatId);
+        verify(categoryRepository).deleteById(existingCatId);
     }
 
     //Тесты на обновление
@@ -99,16 +99,16 @@ public class CategoryServiceImpTest {
     @Test
     void updateCategory_shouldUpdateCategory_whenCategoryExists() {
         NewCategoryDto newCategoryDto = new NewCategoryDto("Updated Category");
-        Category existingCategory = new Category(EXISTING_CAT_ID, "Test Category");
-        when(categoryRepository.findById(EXISTING_CAT_ID)).thenReturn(Optional.of(existingCategory));
-        when(categoryRepository.save(any(Category.class))).thenReturn(new Category(EXISTING_CAT_ID, "Updated Category"));
+        Category existingCategory = new Category(existingCatId, "Test Category");
+        when(categoryRepository.findById(existingCatId)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(new Category(existingCatId, "Updated Category"));
 
-        CategoryDto result = categoryService.updateCategory(newCategoryDto, EXISTING_CAT_ID);
+        CategoryDto result = categoryService.updateCategory(newCategoryDto, existingCatId);
 
         assertNotNull(result);
-        assertEquals(EXISTING_CAT_ID, result.getId());
+        assertEquals(existingCatId, result.getId());
         assertEquals("Updated Category", result.getName());
-        verify(categoryRepository).findById(EXISTING_CAT_ID);
+        verify(categoryRepository).findById(existingCatId);
         verify(categoryRepository).save(any(Category.class));
     }
 
@@ -116,10 +116,10 @@ public class CategoryServiceImpTest {
     @Test
     void updateCategory_shouldThrowNotFoundException_whenCategoryDoesNotExist() {
         NewCategoryDto newCategoryDto = new NewCategoryDto("Updated Category");
-        when(categoryRepository.findById(NON_EXISTENT_CAT_ID)).thenReturn(Optional.empty());
+        when(categoryRepository.findById(nonExistentCatId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> categoryService.updateCategory(newCategoryDto, NON_EXISTENT_CAT_ID));
-        verify(categoryRepository).findById(NON_EXISTENT_CAT_ID);
+        assertThrows(NotFoundException.class, () -> categoryService.updateCategory(newCategoryDto, nonExistentCatId));
+        verify(categoryRepository).findById(nonExistentCatId);
         verify(categoryRepository, never()).save(any(Category.class));
     }
 
@@ -127,12 +127,12 @@ public class CategoryServiceImpTest {
     @Test
     void updateCategory_shouldThrowConflictException_whenNameNotUnique() {
         NewCategoryDto newCategoryDto = new NewCategoryDto("Existing Category");
-        Category existingCategory = new Category(EXISTING_CAT_ID, "Test Category");
-        when(categoryRepository.findById(EXISTING_CAT_ID)).thenReturn(Optional.of(existingCategory));
+        Category existingCategory = new Category(existingCatId, "Test Category");
+        when(categoryRepository.findById(existingCatId)).thenReturn(Optional.of(existingCategory));
         when(categoryRepository.save(any(Category.class))).thenThrow(DataIntegrityViolationException.class);
 
-        assertThrows(ConflictException.class, () -> categoryService.updateCategory(newCategoryDto, EXISTING_CAT_ID));
-        verify(categoryRepository).findById(EXISTING_CAT_ID);
+        assertThrows(ConflictException.class, () -> categoryService.updateCategory(newCategoryDto, existingCatId));
+        verify(categoryRepository).findById(existingCatId);
         verify(categoryRepository).save(any(Category.class));
     }
 
@@ -172,23 +172,23 @@ public class CategoryServiceImpTest {
     //Получение категории
     @Test
     void getCategory_shouldReturnCategory_whenCategoryExists() {
-        Category category = new Category(EXISTING_CAT_ID, "Test Category");
-        when(categoryRepository.findById(EXISTING_CAT_ID)).thenReturn(Optional.of(category));
+        Category category = new Category(existingCatId, "Test Category");
+        when(categoryRepository.findById(existingCatId)).thenReturn(Optional.of(category));
 
-        CategoryDto result = categoryService.getCategory(EXISTING_CAT_ID);
+        CategoryDto result = categoryService.getCategory(existingCatId);
 
         assertNotNull(result);
-        assertEquals(EXISTING_CAT_ID, result.getId());
+        assertEquals(existingCatId, result.getId());
         assertEquals("Test Category", result.getName());
-        verify(categoryRepository).findById(EXISTING_CAT_ID);
+        verify(categoryRepository).findById(existingCatId);
     }
 
     //Получение несуществующей категории
     @Test
     void getCategory_shouldThrowNotFoundException_whenCategoryDoesNotExist() {
-        when(categoryRepository.findById(NON_EXISTENT_CAT_ID)).thenReturn(Optional.empty());
+        when(categoryRepository.findById(nonExistentCatId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> categoryService.getCategory(NON_EXISTENT_CAT_ID));
-        verify(categoryRepository).findById(NON_EXISTENT_CAT_ID);
+        assertThrows(NotFoundException.class, () -> categoryService.getCategory(nonExistentCatId));
+        verify(categoryRepository).findById(nonExistentCatId);
     }
 }

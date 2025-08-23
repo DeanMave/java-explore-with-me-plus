@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.dto.request.user.NewUserRequest;
@@ -22,6 +23,7 @@ import java.util.List;
 public class UserController {
     private final UserService service;
 
+    //Получение пользователей
     @GetMapping("/admin/users")
     public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
                                   @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
@@ -30,12 +32,16 @@ public class UserController {
         return service.getUsers(ids, pageable);
     }
 
+    //Добавление пользователя
     @PostMapping("/admin/users")
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUser(@Valid @RequestBody NewUserRequest newUserRequest) {
         return service.addUser(newUserRequest);
     }
 
+    //Удаление пользователя
     @DeleteMapping("/admin/users/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
         service.deleteUser(userId);
     }
