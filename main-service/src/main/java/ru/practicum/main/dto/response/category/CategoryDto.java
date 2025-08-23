@@ -1,14 +1,12 @@
 package ru.practicum.main.dto.response.category;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class CategoryDto {
     private Long id;
     private String name;
