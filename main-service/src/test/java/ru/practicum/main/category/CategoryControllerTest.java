@@ -61,7 +61,7 @@ public class CategoryControllerTest {
         mockMvc.perform(post("/admin/categories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(existingCatId))
                 .andExpect(jsonPath("$.name").value("Test category"));
     }
@@ -87,7 +87,7 @@ public class CategoryControllerTest {
         doNothing().when(service).deleteCategory(anyLong());
 
         mockMvc.perform(delete("/admin/categories/{catId}", existingCatId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(service, times(1)).deleteCategory(existingCatId);
     }
@@ -95,7 +95,7 @@ public class CategoryControllerTest {
     //Удаление - категория не найдена
     @Test
     void deleteCategory_shouldReturnNotFound_whenCategoryDoesNotExist() throws Exception {
-        doThrow(new NotFoundException("Категория не найдена или недоступна"))
+        doThrow(new NotFoundException("Category with id=" + existingCatId + " was not found"))
                 .when(service).deleteCategory(anyLong());
 
         mockMvc.perform(delete("/admin/categories/{catId}", existingCatId))
@@ -107,7 +107,7 @@ public class CategoryControllerTest {
     //Удаление - категория привязана к событию
     @Test
     void deleteCategory_shouldReturnConflict_whenCategoryIsRelatedToEvents() throws Exception {
-        doThrow(new ConflictException("Существуют события, связанные с категорией"))
+        doThrow(new ConflictException("The category is not empty"))
                 .when(service).deleteCategory(anyLong());
 
         mockMvc.perform(delete("/admin/categories/{catId}", existingCatId))
@@ -140,7 +140,7 @@ public class CategoryControllerTest {
     void updateCategory_shouldReturnNotFound_whenCategoryDoesNotExist() throws Exception {
         NewCategoryDto request = new NewCategoryDto("Updated category");
 
-        doThrow(new NotFoundException("Категория не найдена или недоступна"))
+        doThrow(new NotFoundException("Category with id=" + existingCatId + " was not found"))
                 .when(service).updateCategory(any(NewCategoryDto.class), anyLong());
 
         mockMvc.perform(patch("/admin/categories/{catId}", existingCatId)
@@ -218,7 +218,7 @@ public class CategoryControllerTest {
     //Получение несуществующей категории
     @Test
     void getCategory_shouldReturnNotFound_whenCategoryDoesNotExist() throws Exception {
-        doThrow(new NotFoundException("Категория не найдена или недоступна"))
+        doThrow(new NotFoundException("Category with id=" + existingCatId + " was not found"))
                 .when(service).getCategory(anyLong());
 
         mockMvc.perform(get("/categories/{catId}", existingCatId))

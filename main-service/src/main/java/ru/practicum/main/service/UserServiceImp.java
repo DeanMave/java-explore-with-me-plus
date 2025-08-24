@@ -53,7 +53,7 @@ public class UserServiceImp implements UserService {
             log.info("Пользователь добавлен: {}", savedUser);
             return toDto(savedUser);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Нарушение целостности данных");
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ public class UserServiceImp implements UserService {
     public void deleteUser(Long userId) {
         log.info("Попытка удаления пользователя по ID: {}", userId);
         if (!repository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден или недоступен");
+            throw new NotFoundException("User with id=" + userId + " was not found");
         }
         repository.deleteById(userId);
         log.info("Пользователь с ID: {} удален", userId);

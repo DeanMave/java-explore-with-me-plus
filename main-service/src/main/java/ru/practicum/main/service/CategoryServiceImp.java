@@ -40,7 +40,7 @@ public class CategoryServiceImp implements CategoryService {
     //Получение категории
     @Override
     public CategoryDto getCategory(Long catId) {
-        return toDto(repository.findById(catId).orElseThrow(() -> new NotFoundException("Категория не найдена или недоступна")));
+        return toDto(repository.findById(catId).orElseThrow(() -> new NotFoundException("Category with id=" + catId + " was not found")));
     }
 
     //Добавление
@@ -54,7 +54,7 @@ public class CategoryServiceImp implements CategoryService {
             log.info("Категория добавлена: {}", savedCategory);
             return toDto(savedCategory);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Имя категории должно быть уникальным!");
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -64,13 +64,13 @@ public class CategoryServiceImp implements CategoryService {
     public void deleteCategory(Long catId) {
         log.info("Попытка удаления категории по ID: {}", catId);
         if (!repository.existsById(catId)) {
-            throw new NotFoundException("Категория не найдена или недоступна");
+            throw new NotFoundException("Category with id=" + catId + " was not found");
         }
         try {
             repository.deleteById(catId);
             log.info("Категория с ID: {} удалена", catId);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Существуют события, связанные с категорией");
+            throw new ConflictException("The category is not empty");
         }
     }
 
@@ -80,14 +80,14 @@ public class CategoryServiceImp implements CategoryService {
     public CategoryDto updateCategory(NewCategoryDto newCategoryDto, Long catId) {
         log.info("Попытка обновления категории с ID " + catId);
         Category existingCategory = repository.findById(catId)
-                .orElseThrow(() -> new NotFoundException("Категория не найдена или недоступна"));
+                .orElseThrow(() -> new NotFoundException("Category with id=" + catId + " was not found"));
         try {
             existingCategory.setName(newCategoryDto.getName());
             Category updatedCategory = repository.save(existingCategory);
             log.info("Категория обновлена: {}", updatedCategory);
             return toDto(updatedCategory);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Нарушение целостности данных");
+            throw new ConflictException(e.getMessage());
         }
     }
 }
