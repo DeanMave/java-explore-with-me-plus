@@ -9,8 +9,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.server.service.EndpointHitService;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+
+import static org.h2.expression.function.DateTimeFormatFunction.parseDateTime;
 
 @RestController
 @RequestMapping("/stats")
@@ -19,10 +25,23 @@ public class ViewStatsController {
     private final EndpointHitService endpointHitService;
 
     @GetMapping
-    public List<ViewStatsDto> findStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+    public List<ViewStatsDto> findStats(@RequestParam String start,
+                                        @RequestParam String end,
                                         @RequestParam(required = false) List<String> uris,
                                         @RequestParam(defaultValue = "false") boolean unique) {
-        return endpointHitService.getStats(start, end, uris, unique);
+
+        // Декодируем и парсим вручную
+        LocalDateTime startDate = parseDateTime(URLDecoder.decode(start, StandardCharsets.UTF_8));
+        LocalDateTime endDate = parseDateTime(URLDecoder.decode(end, StandardCharsets.UTF_8));
+
+        return endpointHitService.getStats(startDate, endDate, uris, unique);
+    }
+
+    private LocalDateTime parseDateTime(String dateTimeStr) {
+        try {
+            return LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Expected: yyyy-MM-dd HH:mm:ss", e);
+        }
     }
 }

@@ -13,9 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchOfEventByAdminDto {
-    private List<Integer> users;
+    private List<Long> users;
     private List<String> states;
-    private List<Integer> categories;
+    private List<Long> categories;
     private LocalDateTime rangeStart;
     private LocalDateTime rangeEnd;
 }

@@ -1,10 +1,8 @@
 package ru.practicum.main.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.dto.mappers.EventMapper;
@@ -23,7 +21,6 @@ import ru.practicum.main.model.*;
 import ru.practicum.main.repository.*;
 import ru.practicum.main.service.interfaces.EventPrivateService;
 import ru.practicum.stats.client.StatClient;
-import ru.practicum.stats.dto.dto.ViewStatsDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,16 +31,26 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class EventPrivateServiceImpl implements EventPrivateService {
+public class EventPrivateServiceImpl extends AbstractEventService implements EventPrivateService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
-    private final RequestRepository requestRepository;
-    private final StatClient statClient;
+
+    public EventPrivateServiceImpl(RequestRepository requestRepository,
+                                   StatClient statClient,
+                                   EventRepository eventRepository,
+                                   UserRepository userRepository,
+                                   CategoryRepository categoryRepository,
+                                   LocationRepository locationRepository) {
+        super(requestRepository, statClient);
+        this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+        this.locationRepository = locationRepository;
+    }
 
     @Override
     public List<EventShortDto> getEvents(Long userId, Pageable pageable) {
@@ -203,69 +210,6 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         log.info("Статусы заявок для события {} обновлены: подтверждено {}, отклонено {}",
                 eventId, result.getConfirmedRequests().size(), result.getRejectedRequests().size());
         return result;
-    }
-
-    private Map<Long, Long> getEventsViews(List<Event> events) {
-        if (events.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        // Формируем список URI для запроса статистики
-        List<String> uris = events.stream()
-                .map(event -> "/events/" + event.getId())
-                .collect(Collectors.toList());
-
-        // Период для статистики - последний год
-        LocalDateTime start = LocalDateTime.now().minusYears(1);
-        LocalDateTime end = LocalDateTime.now();
-
-        try {
-            // Получаем статистику из сервера статистики
-            ResponseEntity<List<ViewStatsDto>> response = statClient.getStats(start, end, uris, false);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return response.getBody().stream()
-                        .collect(Collectors.toMap(
-                                stats -> extractEventIdFromUri(stats.getUri()),
-                                ViewStatsDto::getHits
-                        ));
-            }
-        } catch (Exception e) {
-            log.warn("Ошибка при получении статистики просмотров: {}", e.getMessage());
-        }
-
-        // В случае ошибки возвращаем 0 просмотров для всех событий
-        return events.stream()
-                .collect(Collectors.toMap(Event::getId, event -> 0L));
-    }
-
-    private Long extractEventIdFromUri(String uri) {
-        try {
-            return Long.parseLong(uri.replace("/events/", ""));
-        } catch (NumberFormatException e) {
-            log.warn("Не удалось извлечь ID события из URI: {}", uri);
-            return 0L;
-        }
-    }
-
-    private Long getEventViews(Long eventId) {
-        try {
-            LocalDateTime start = LocalDateTime.now().minusYears(1);
-            LocalDateTime end = LocalDateTime.now();
-            List<String> uris = List.of("/events/" + eventId);
-
-            ResponseEntity<List<ViewStatsDto>> response = statClient.getStats(start, end, uris, false);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return response.getBody().stream()
-                        .findFirst()
-                        .map(ViewStatsDto::getHits)
-                        .orElse(0L);
-            }
-        } catch (Exception e) {
-            log.warn("Ошибка при получении статистики просмотров для события {}: {}", eventId, e.getMessage());
-        }
-        return 0L;
     }
 
     private void validateEventDate(LocalDateTime eventDate) {

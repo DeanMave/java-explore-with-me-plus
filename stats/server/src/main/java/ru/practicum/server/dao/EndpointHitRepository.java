@@ -12,7 +12,7 @@ import java.util.List;
 public interface EndpointHitRepository extends JpaRepository<EndpointHit, Integer> {
 
     @Query("""
-            SELECT new dto.ViewStatsDto(e.app, e.uri, COUNT(DISTINCT e.ip))
+            SELECT new ru.practicum.stats.dto.dto.ViewStatsDto(e.app, e.uri, COUNT(DISTINCT e.ip))
             FROM EndpointHit e
             WHERE e.uri IN :uris AND e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
@@ -22,7 +22,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
 
 
     @Query("""
-            SELECT new dto.ViewStatsDto(e.app, e.uri, COUNT(e.ip))
+            SELECT new ru.practicum.stats.dto.dto.ViewStatsDto(e.app, e.uri, COUNT(e.ip))
             FROM EndpointHit e
             WHERE e.uri IN :uris AND e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
@@ -31,7 +31,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
     List<ViewStatsDto> findAllStatsByUris(@Param("uris") List<String> uris, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("""
-            SELECT new dto.ViewStatsDto(e.app, e.uri, COUNT(e.ip))
+            SELECT new ru.practicum.stats.dto.dto.ViewStatsDto(e.app, e.uri, COUNT(e.ip))
             FROM EndpointHit e
             WHERE e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
@@ -40,7 +40,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
     List<ViewStatsDto> findAllStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("""
-            SELECT new dto.ViewStatsDto(e.app, e.uri, COUNT(DISTINCT e.ip))
+            SELECT new ru.practicum.stats.dto.dto.ViewStatsDto(e.app, e.uri, COUNT(DISTINCT e.ip))
             FROM EndpointHit e
             WHERE e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri

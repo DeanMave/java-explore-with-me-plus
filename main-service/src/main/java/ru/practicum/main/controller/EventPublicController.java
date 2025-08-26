@@ -1,11 +1,13 @@
 package ru.practicum.main.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.dto.request.event.SearchOfEventByPublicDto;
@@ -27,16 +29,17 @@ public class EventPublicController {
     private final EventPublicService eventPublicService;
 
     @GetMapping
-    public List<EventShortDto> getEvents(@RequestParam(name = "text") String text,
-                                         @RequestParam(name = "categories") List<Integer> categories,
-                                         @RequestParam(name = "paid") Boolean paid,
-                                         @RequestParam(name = "rangeStart") LocalDateTime rangeStart,
-                                         @RequestParam(name = "rangeEnd") LocalDateTime rangeEnd,
+    public List<EventShortDto> getEvents(@RequestParam(name = "text", required = false) String text,
+                                         @RequestParam(name = "categories", required = false) List<Long> categories,
+                                         @RequestParam(name = "paid", required = false) Boolean paid,
+                                         @RequestParam(name = "rangeStart", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                         @RequestParam(name = "rangeEnd", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                          @RequestParam(name = "onlyAvailable", defaultValue = "false")
                                          Boolean onlyAvailable,
-                                         @RequestParam(name = "sort") SortOfEvent sort,
+                                         @RequestParam(name = "sort", required = false) SortOfEvent sort,
                                          @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                         @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                         @Positive @RequestParam(name = "size", defaultValue = "10") Integer size,
+                                         HttpServletRequest request) {
         log.debug("Поступил публичный запрос на возврат списка всех событий, подходящие под запрашиваемые условия");
         SearchOfEventByPublicDto searchOfEventByPublicDto = SearchOfEventByPublicDto.builder()
                 .text(text)
@@ -48,12 +51,13 @@ public class EventPublicController {
                 .sort(sort)
                 .build();
         Pageable pageable = PageRequest.of(from, size);
-        return eventPublicService.getEvents(searchOfEventByPublicDto, pageable);
+        return eventPublicService.getEvents(searchOfEventByPublicDto, pageable, request);
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getEvent(@PathVariable @Positive Long id) {
+    public EventFullDto getEvent(@PathVariable @Positive Long id,
+                                 HttpServletRequest request) {
         log.debug("Поступил публичный запрос на возврат события {}", id);
-        return eventPublicService.getEvent(id);
+        return eventPublicService.getEvent(id, request);
     }
 }

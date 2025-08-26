@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SearchOfEventByPublicDto {
     private String text;
-    private List<Integer> categories;
+    private List<Long> categories;
     private Boolean paid;
     private LocalDateTime rangeStart;
     private LocalDateTime rangeEnd;
