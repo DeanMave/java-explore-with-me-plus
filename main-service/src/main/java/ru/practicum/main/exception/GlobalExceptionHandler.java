@@ -1,7 +1,9 @@
 package ru.practicum.main.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -59,6 +62,49 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 "Для запрошенной операции условия не выполнены.",
                 HttpStatus.FORBIDDEN
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+        List<String> errors = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> String.format("Поле: %s. Ошибка: %s. Значение: %s",
+                        error.getField(), error.getDefaultMessage(), error.getRejectedValue()))
+                .collect(Collectors.toList());
+
+        // Добавляем stacktrace к ошибкам валидации
+        errors.addAll(getStackTraceAsList(e));
+
+        log.warn("Ошибка валидации: {}", errors);
+        return new ApiError(
+                errors,
+                "Некорректно составленный запрос",
+                "Ошибка валидации параметров",
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleConstraintViolation(ConstraintViolationException e) {
+        List<String> errors = e.getConstraintViolations()
+                .stream()
+                .map(violation -> String.format("Параметр: %s. Ошибка: %s. Значение: %s",
+                        violation.getPropertyPath(), violation.getMessage(), violation.getInvalidValue()))
+                .collect(Collectors.toList());
+
+        // Добавляем stacktrace к ошибкам валидации
+        errors.addAll(getStackTraceAsList(e));
+
+        log.warn("Ошибка валидации параметров: {}", errors);
+        return new ApiError(
+                errors,
+                "Некорректно составленный запрос",
+                "Ошибка валидации параметров запроса",
+                HttpStatus.BAD_REQUEST
         );
     }
 

@@ -1,6 +1,6 @@
 package ru.practicum.server.dao;
 
-import dto.ViewStatsDto;
+import ru.practicum.stats.dto.dto.ViewStatsDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

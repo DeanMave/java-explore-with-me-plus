@@ -1,5 +1,7 @@
-import dto.EndpointHitDto;
-import dto.ViewStatsDto;
+package ru.practicum.stats.client;
+
+import ru.practicum.stats.dto.dto.EndpointHitDto;
+import ru.practicum.stats.dto.dto.ViewStatsDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;

@@ -44,7 +44,7 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
-    private Location location;
+    private LocationEntity locationEntity;
 
     @Column(name = "paid", nullable = false)
     private Boolean paid;
