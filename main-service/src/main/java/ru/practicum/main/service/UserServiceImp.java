@@ -48,13 +48,9 @@ public class UserServiceImp implements UserService {
     public UserDto addUser(NewUserRequest newUserRequest) {
         log.info("Добавление нового пользователя " + newUserRequest);
         User user = toEntity(newUserRequest);
-        try {
-            User savedUser = repository.save(user);
-            log.info("Пользователь добавлен: {}", savedUser);
-            return toDto(savedUser);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage());
-        }
+        User savedUser = repository.save(user);
+        log.info("Пользователь добавлен: {}", savedUser);
+        return toDto(savedUser);
     }
 
     //Удаление пользователя

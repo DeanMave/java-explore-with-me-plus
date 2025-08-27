@@ -2,6 +2,7 @@ package ru.practicum.main.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -117,6 +118,18 @@ public class GlobalExceptionHandler {
                 "Внутренняя ошибка сервера",
                 "Произошла непредвиденная ошибка.",
                 HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        log.warn("DataIntegrityViolationException: {}", e.getMessage(), e);
+        return new ApiError(
+                getStackTraceAsList(e),
+                e.getMessage(),
+                "Нарушение целостности данных.",
+                HttpStatus.CONFLICT
         );
     }
 

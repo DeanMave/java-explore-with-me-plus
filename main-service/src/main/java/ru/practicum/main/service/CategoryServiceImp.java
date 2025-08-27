@@ -49,13 +49,9 @@ public class CategoryServiceImp implements CategoryService {
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         log.info("Добавление новой категории " + newCategoryDto);
         Category category = toEntity(newCategoryDto);
-        try {
-            Category savedCategory = repository.save(category);
-            log.info("Категория добавлена: {}", savedCategory);
-            return toDto(savedCategory);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage());
-        }
+        Category savedCategory = repository.save(category);
+        log.info("Категория добавлена: {}", savedCategory);
+        return toDto(savedCategory);
     }
 
     //Удаление
@@ -66,12 +62,8 @@ public class CategoryServiceImp implements CategoryService {
         if (!repository.existsById(catId)) {
             throw new NotFoundException("Category with id=" + catId + " was not found");
         }
-        try {
-            repository.deleteById(catId);
-            log.info("Категория с ID: {} удалена", catId);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("The category is not empty");
-        }
+        repository.deleteById(catId);
+        log.info("Категория с ID: {} удалена", catId);
     }
 
     //Обновление
@@ -81,13 +73,10 @@ public class CategoryServiceImp implements CategoryService {
         log.info("Попытка обновления категории с ID " + catId);
         Category existingCategory = repository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Category with id=" + catId + " was not found"));
-        try {
-            existingCategory.setName(newCategoryDto.getName());
-            Category updatedCategory = repository.save(existingCategory);
-            log.info("Категория обновлена: {}", updatedCategory);
-            return toDto(updatedCategory);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage());
-        }
+
+        existingCategory.setName(newCategoryDto.getName());
+        Category updatedCategory = repository.save(existingCategory);
+        log.info("Категория обновлена: {}", updatedCategory);
+        return toDto(updatedCategory);
     }
 }
