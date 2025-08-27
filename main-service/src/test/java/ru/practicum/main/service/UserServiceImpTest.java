@@ -1,4 +1,4 @@
-package ru.practicum.main.users;
+package ru.practicum.main.service;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;

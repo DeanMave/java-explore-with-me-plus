@@ -1,4 +1,4 @@
-package ru.practicum.main.category;
+package ru.practicum.main.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.main.controller.CategoryController;
 import ru.practicum.main.dto.request.category.NewCategoryDto;
 import ru.practicum.main.dto.response.category.CategoryDto;
 import ru.practicum.main.exception.ConflictException;

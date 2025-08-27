@@ -1,4 +1,4 @@
-package ru.practicum.main.users;
+package ru.practicum.main.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.main.controller.UserController;
 import ru.practicum.main.dto.request.user.NewUserRequest;
 import ru.practicum.main.dto.response.user.UserDto;
 import ru.practicum.main.service.interfaces.UserService;
