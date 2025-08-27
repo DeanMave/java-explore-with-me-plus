@@ -14,7 +14,6 @@ import ru.practicum.main.dto.response.event.EventRequestStatusUpdateResult;
 import ru.practicum.main.dto.response.event.EventShortDto;
 import ru.practicum.main.dto.response.request.ParticipationRequestDto;
 import ru.practicum.main.exception.ConflictException;
-import ru.practicum.main.exception.ForbiddenException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.exception.ValidationException;
 import ru.practicum.main.model.*;
@@ -241,7 +240,7 @@ public class EventPrivateServiceImpl extends AbstractEventService implements Eve
     private void validateEventCanBeUpdated(Event event) {
         // Можно редактировать только отмененные события или события в состоянии ожидания модерации
         if (event.getState() != Event.EventState.PENDING && event.getState() != Event.EventState.CANCELED) {
-            throw new ForbiddenException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
+            throw new ConflictException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
     }
 

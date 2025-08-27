@@ -14,6 +14,7 @@ import ru.practicum.main.dto.request.event.SearchOfEventByPublicDto;
 import ru.practicum.main.dto.response.event.EventFullDto;
 import ru.practicum.main.dto.response.event.EventShortDto;
 import ru.practicum.main.exception.NotFoundException;
+import ru.practicum.main.exception.ValidationException;
 import ru.practicum.main.model.Event;
 import ru.practicum.main.model.QEvent;
 import ru.practicum.main.repository.EventRepository;
@@ -44,6 +45,11 @@ public class EventPublicServiceImpl extends AbstractEventService implements Even
     @Override
     public List<EventShortDto> getEvents(SearchOfEventByPublicDto searchDto, Pageable pageable, HttpServletRequest request) {
         log.debug("Публичный поиск событий по критериям: {}", searchDto);
+        if (searchDto.getRangeStart() != null
+                && searchDto.getRangeEnd() != null
+                && searchDto.getRangeEnd().isBefore(searchDto.getRangeStart())) {
+            throw new ValidationException("Дата окончания события должна быть после даты начала");
+        }
         Predicate predicate = buildPredicate(searchDto);
         Page<Event> eventsPage = eventRepository.findAll(predicate, pageable);
         if (eventsPage.isEmpty()) {

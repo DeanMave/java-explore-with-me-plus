@@ -8,6 +8,7 @@ import ru.practicum.server.model.EndpointHit;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface EndpointHitRepository extends JpaRepository<EndpointHit, Integer> {
 
@@ -47,4 +48,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
             ORDER BY COUNT(DISTINCT e.ip) DESC
             """)
     List<ViewStatsDto> findAllUniqueStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT e FROM EndpointHit e WHERE e.ip = :ip AND e.uri = :uri")
+    Optional<EndpointHit> findByIpAndUri(String ip, String uri);
 }
