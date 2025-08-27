@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.main.dto.request.user.NewUserRequest;
 import ru.practicum.main.dto.response.user.UserDto;
 import ru.practicum.main.service.interfaces.UserService;
+import ru.practicum.stats.client.StatClient;
 
 import java.util.List;
 
@@ -29,6 +30,9 @@ public class UserControllerTest {
 
     @MockBean
     private UserService service;
+
+    @MockBean
+    private StatClient statClient;
 
     //Тесты на получение
     //Получение - список id

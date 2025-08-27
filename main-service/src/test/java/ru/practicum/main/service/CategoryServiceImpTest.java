@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -12,11 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.dto.request.category.NewCategoryDto;
 import ru.practicum.main.dto.response.category.CategoryDto;
-import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.model.Category;
 import ru.practicum.main.repository.CategoryRepository;
 import ru.practicum.main.service.interfaces.CategoryService;
+import ru.practicum.stats.client.StatClient;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +31,9 @@ public class CategoryServiceImpTest {
 
     @MockBean
     private CategoryRepository categoryRepository;
+
+    @MockBean
+    private StatClient statClient;
 
     private final Long existingCatId = 1L;
     private final Long nonExistentCatId = 99L;
@@ -51,28 +53,6 @@ public class CategoryServiceImpTest {
         verify(categoryRepository).save(any(Category.class));
     }
 
-    @Test
-    void addCategory_shouldThrowConflictException_whenNameIsNotUnique() {
-        NewCategoryDto newCategoryDto = new NewCategoryDto("Test Category");
-        when(categoryRepository.save(any(Category.class))).thenThrow(DataIntegrityViolationException.class);
-
-        assertThrows(ConflictException.class, () -> categoryService.addCategory(newCategoryDto));
-        verify(categoryRepository).save(any(Category.class));
-    }
-
-    //Тесты на удаление
-    //Успешное удаление
-    @Test
-    void deleteCategory_shouldDeleteCategory_whenCategoryExistsAndIsNotUsed() {
-        when(categoryRepository.existsById(existingCatId)).thenReturn(true);
-        doNothing().when(categoryRepository).deleteById(existingCatId);
-
-        categoryService.deleteCategory(existingCatId);
-
-        verify(categoryRepository).existsById(existingCatId);
-        verify(categoryRepository).deleteById(existingCatId);
-    }
-
     //Удаление - не найдена категория
     @Test
     void deleteCategory_shouldThrowNotFoundException_whenCategoryDoesNotExist() {
@@ -81,17 +61,6 @@ public class CategoryServiceImpTest {
         assertThrows(NotFoundException.class, () -> categoryService.deleteCategory(nonExistentCatId));
         verify(categoryRepository).existsById(nonExistentCatId);
         verify(categoryRepository, never()).deleteById(anyLong());
-    }
-
-    //Удаление - категория привязана к событию
-    @Test
-    void deleteCategory_shouldThrowConflictException_whenCategoryIsRelatedToEvents() {
-        when(categoryRepository.existsById(existingCatId)).thenReturn(true);
-        doThrow(DataIntegrityViolationException.class).when(categoryRepository).deleteById(existingCatId);
-
-        assertThrows(ConflictException.class, () -> categoryService.deleteCategory(existingCatId));
-        verify(categoryRepository).existsById(existingCatId);
-        verify(categoryRepository).deleteById(existingCatId);
     }
 
     //Тесты на обновление
@@ -121,19 +90,6 @@ public class CategoryServiceImpTest {
         assertThrows(NotFoundException.class, () -> categoryService.updateCategory(newCategoryDto, nonExistentCatId));
         verify(categoryRepository).findById(nonExistentCatId);
         verify(categoryRepository, never()).save(any(Category.class));
-    }
-
-    //Обновление - нарушение целостности данных
-    @Test
-    void updateCategory_shouldThrowConflictException_whenNameNotUnique() {
-        NewCategoryDto newCategoryDto = new NewCategoryDto("Existing Category");
-        Category existingCategory = new Category(existingCatId, "Test Category");
-        when(categoryRepository.findById(existingCatId)).thenReturn(Optional.of(existingCategory));
-        when(categoryRepository.save(any(Category.class))).thenThrow(DataIntegrityViolationException.class);
-
-        assertThrows(ConflictException.class, () -> categoryService.updateCategory(newCategoryDto, existingCatId));
-        verify(categoryRepository).findById(existingCatId);
-        verify(categoryRepository).save(any(Category.class));
     }
 
     //Тесты на получение

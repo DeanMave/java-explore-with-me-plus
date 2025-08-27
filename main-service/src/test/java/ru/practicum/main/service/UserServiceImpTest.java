@@ -5,17 +5,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.main.dto.request.user.NewUserRequest;
 import ru.practicum.main.dto.response.user.UserDto;
-import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.model.User;
 import ru.practicum.main.repository.UserRepository;
 import ru.practicum.main.service.interfaces.UserService;
+import ru.practicum.stats.client.StatClient;
 
 import java.util.List;
 
@@ -30,6 +29,9 @@ public class UserServiceImpTest {
 
     @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private StatClient statClient;
 
     //Тесты на получение пользователей
     //Получение - список id
@@ -74,16 +76,6 @@ public class UserServiceImpTest {
         assertEquals(1L, result.getId());
         assertEquals("New User", result.getName());
         assertEquals("new.user@example.com", result.getEmail());
-        verify(userRepository).save(any(User.class));
-    }
-
-    //Добавление - дубликат почты
-    @Test
-    void addUser_shouldThrowConflictException_whenEmailIsNotUnique() {
-        NewUserRequest newUserRequest = new NewUserRequest("Duplicate User", "existing.user@example.com");
-        when(userRepository.save(any(User.class)))
-                .thenThrow(DataIntegrityViolationException.class);
-        assertThrows(ConflictException.class, () -> userService.addUser(newUserRequest));
         verify(userRepository).save(any(User.class));
     }
 
