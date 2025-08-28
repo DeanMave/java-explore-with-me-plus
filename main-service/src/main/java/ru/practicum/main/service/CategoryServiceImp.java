@@ -2,14 +2,12 @@ package ru.practicum.main.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.dto.mappers.CategoryMapper;
 import ru.practicum.main.dto.request.category.NewCategoryDto;
 import ru.practicum.main.dto.response.category.CategoryDto;
-import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.model.Category;
 import ru.practicum.main.repository.CategoryRepository;
@@ -49,13 +47,9 @@ public class CategoryServiceImp implements CategoryService {
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         log.info("Добавление новой категории " + newCategoryDto);
         Category category = toEntity(newCategoryDto);
-        try {
-            Category savedCategory = repository.save(category);
-            log.info("Категория добавлена: {}", savedCategory);
-            return toDto(savedCategory);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage());
-        }
+        Category savedCategory = repository.save(category);
+        log.info("Категория добавлена: {}", savedCategory);
+        return toDto(savedCategory);
     }
 
     //Удаление
@@ -66,12 +60,8 @@ public class CategoryServiceImp implements CategoryService {
         if (!repository.existsById(catId)) {
             throw new NotFoundException("Category with id=" + catId + " was not found");
         }
-        try {
-            repository.deleteById(catId);
-            log.info("Категория с ID: {} удалена", catId);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("The category is not empty");
-        }
+        repository.deleteById(catId);
+        log.info("Категория с ID: {} удалена", catId);
     }
 
     //Обновление
@@ -81,13 +71,10 @@ public class CategoryServiceImp implements CategoryService {
         log.info("Попытка обновления категории с ID " + catId);
         Category existingCategory = repository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Category with id=" + catId + " was not found"));
-        try {
-            existingCategory.setName(newCategoryDto.getName());
-            Category updatedCategory = repository.save(existingCategory);
-            log.info("Категория обновлена: {}", updatedCategory);
-            return toDto(updatedCategory);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage());
-        }
+
+        existingCategory.setName(newCategoryDto.getName());
+        Category updatedCategory = repository.save(existingCategory);
+        log.info("Категория обновлена: {}", updatedCategory);
+        return toDto(updatedCategory);
     }
 }

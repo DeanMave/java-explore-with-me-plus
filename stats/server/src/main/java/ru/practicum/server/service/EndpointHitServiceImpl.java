@@ -1,7 +1,7 @@
 package ru.practicum.server.service;
 
-import dto.EndpointHitDto;
-import dto.ViewStatsDto;
+import ru.practicum.stats.dto.dto.EndpointHitDto;
+import ru.practicum.stats.dto.dto.ViewStatsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +28,14 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     @Transactional
     public EndpointHitDto save(final EndpointHitDto newEndpointHit) {
         log.debug("сохранение информации о запросе {}", newEndpointHit);
+
+        // Проверяем, был ли уже такой IP + URI
+        if (endpointHitRepository.findByIpAndUri(newEndpointHit.getIp(), newEndpointHit.getUri()).isPresent()) {
+            log.debug("Дубликат IP+URI: {} + {}. Возвращаем DTO без сохранения.",
+                    newEndpointHit.getIp(), newEndpointHit.getUri());
+            return toDto(toEntity(newEndpointHit));
+        }
+
         final EndpointHit endpointHit = toEntity(newEndpointHit);
         return toDto(endpointHitRepository.save(endpointHit));
     }

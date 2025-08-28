@@ -1,4 +1,4 @@
-package ru.practicum.main.category;
+package ru.practicum.main.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,12 +9,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.main.controller.CategoryController;
 import ru.practicum.main.dto.request.category.NewCategoryDto;
 import ru.practicum.main.dto.response.category.CategoryDto;
 import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.service.interfaces.CategoryService;
+import ru.practicum.stats.client.StatClient;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,15 +22,16 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(CategoryController.class)
-public class CategoryControllerTest {
+class CategoryControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -39,6 +40,9 @@ public class CategoryControllerTest {
 
     @MockBean
     private CategoryService service;
+
+    @MockBean
+    private StatClient statClient;
 
     private final Long existingCatId = 1L;
 
