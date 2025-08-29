@@ -7,7 +7,7 @@ import java.util.List;
 
 public class RequestMapper {
 
-    public static ParticipationRequestDto toDto(Request request) {
+    public static ParticipationRequestDto toParticipationRequestDto(Request request) {
         return ParticipationRequestDto
                 .builder()
                 .id(request.getId())
@@ -19,6 +19,6 @@ public class RequestMapper {
     }
 
     public static List<ParticipationRequestDto> toDto(List<Request> requests) {
-        return requests.stream().map(RequestMapper::toDto).toList();
+        return requests.stream().map(RequestMapper::toParticipationRequestDto).toList();
     }
 }
