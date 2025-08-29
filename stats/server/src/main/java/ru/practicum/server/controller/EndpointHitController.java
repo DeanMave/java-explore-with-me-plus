@@ -1,6 +1,6 @@
 package ru.practicum.server.controller;
 
-import dto.EndpointHitDto;
+import ru.practicum.stats.dto.dto.EndpointHitDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

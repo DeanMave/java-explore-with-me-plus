@@ -1,20 +1,21 @@
 package ru.practicum.main.dto.mappers;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.main.dto.response.request.ParticipationRequestDto;
 import ru.practicum.main.model.Request;
-
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestMapper {
 
     public static ParticipationRequestDto toParticipationRequestDto(Request request) {
-        return ParticipationRequestDto
-                .builder()
+        return ParticipationRequestDto.builder()
                 .id(request.getId())
-                .requester(request.getRequester().getId())
-                .event(request.getEvent().getId())
                 .created(request.getCreated())
-                .status(request.getStatus().toString())
+                .event(request.getEvent().getId())
+                .requester(request.getRequester().getId())
+                .status(request.getStatus().name())
                 .build();
     }
 

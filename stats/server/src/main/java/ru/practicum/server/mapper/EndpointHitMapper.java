@@ -1,6 +1,6 @@
 package ru.practicum.server.mapper;
 
-import dto.EndpointHitDto;
+import ru.practicum.stats.dto.dto.EndpointHitDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.server.model.EndpointHit;

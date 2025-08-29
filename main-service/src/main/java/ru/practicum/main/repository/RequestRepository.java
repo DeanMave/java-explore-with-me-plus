@@ -9,6 +9,14 @@ import java.util.List;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
+    @Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = :eventId AND r.status = 'CONFIRMED'")
+    Integer countConfirmedRequestsByEventId(@Param("eventId") Long eventId);
+
+    List<Request> findAllByEventId(Long eventId);
+
+    List<Request> findAllByIdInAndEventId(List<Long> ids, Long eventId);
+
+
     @Query("""
             SELECT r FROM Request r
             JOIN FETCH r.event

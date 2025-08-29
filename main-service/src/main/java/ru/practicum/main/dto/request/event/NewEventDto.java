@@ -1,5 +1,6 @@
 package ru.practicum.main.dto.request.event;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class NewEventDto {
     @Size(min = 20, max = 7000, message = "Длина должна быть от 20 до 7000 символов")
     private String description;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "Поле eventDate не может быть null")
     @Future(message = "Дата события должна быть в будущем")
     private LocalDateTime eventDate;

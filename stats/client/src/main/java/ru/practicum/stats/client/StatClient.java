@@ -1,5 +1,7 @@
-import dto.EndpointHitDto;
-import dto.ViewStatsDto;
+package ru.practicum.stats.client;
+
+import ru.practicum.stats.dto.dto.EndpointHitDto;
+import ru.practicum.stats.dto.dto.ViewStatsDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -36,8 +38,8 @@ public class StatClient {
 
     public ResponseEntity<List<ViewStatsDto>> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("stats")
-                .queryParam("start", encodeValue(start.format(DATE_TIME_FORMATTER)))
-                .queryParam("end", encodeValue(end.format(DATE_TIME_FORMATTER)));
+                .queryParam("start", start.format(DATE_TIME_FORMATTER)) //Было так: encodeValue(start.format(DATE_TIME_FORMATTER)))
+                .queryParam("end", end.format(DATE_TIME_FORMATTER));    //Было так: encodeValue(start.format(DATE_TIME_FORMATTER)))
 
         if (uris != null && !uris.isEmpty()) {
             uriBuilder.queryParam("uris", uris.toArray());
@@ -58,6 +60,6 @@ public class StatClient {
 
     private String encodeValue(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
-    }
+    } // Более не нужен?
 
 }

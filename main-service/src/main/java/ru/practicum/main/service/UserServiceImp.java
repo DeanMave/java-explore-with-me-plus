@@ -2,14 +2,12 @@ package ru.practicum.main.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.dto.mappers.UserMapper;
 import ru.practicum.main.dto.request.user.NewUserRequest;
 import ru.practicum.main.dto.response.user.UserDto;
-import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.model.User;
 import ru.practicum.main.repository.UserRepository;
@@ -48,13 +46,9 @@ public class UserServiceImp implements UserService {
     public UserDto addUser(NewUserRequest newUserRequest) {
         log.info("Добавление нового пользователя " + newUserRequest);
         User user = toEntity(newUserRequest);
-        try {
-            User savedUser = repository.save(user);
-            log.info("Пользователь добавлен: {}", savedUser);
-            return toDto(savedUser);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(e.getMessage());
-        }
+        User savedUser = repository.save(user);
+        log.info("Пользователь добавлен: {}", savedUser);
+        return toDto(savedUser);
     }
 
     //Удаление пользователя
