@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static ru.practicum.main.dto.mappers.RequestMapper.toDto;
+import static ru.practicum.main.dto.mappers.RequestMapper.toParticipationRequestDto;
 
 @Service
 @Slf4j
@@ -41,7 +42,7 @@ public class RequestServiceImpl implements RequestService {
             throw new OwnershipMismatchException("пользователь " + userId + " не отправлял запрос " + request.getId());
         }
         request.setStatus(Request.RequestStatus.CANCELED);
-        return toDto(requestRepository.save(request));
+        return toParticipationRequestDto(requestRepository.save(request));
     }
 
     @Override
@@ -67,7 +68,7 @@ public class RequestServiceImpl implements RequestService {
                 .created(LocalDateTime.now())
                 .status(event.getRequestModeration() ? Request.RequestStatus.PENDING : Request.RequestStatus.CONFIRMED)
                 .build();
-        return toDto(requestRepository.save(request));
+        return toParticipationRequestDto(requestRepository.save(request));
     }
 
     private User getUserById(Long userId) {

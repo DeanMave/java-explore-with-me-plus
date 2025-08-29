@@ -1,4 +1,4 @@
-package ru.practicum.main.request;
+package ru.practicum.main.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -7,9 +7,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.main.controller.RequestController;
 import ru.practicum.main.dto.response.request.ParticipationRequestDto;
 import ru.practicum.main.service.interfaces.RequestService;
+import ru.practicum.stats.client.StatClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +27,9 @@ public class RequestControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @MockBean
+    private StatClient statClient;
 
     @MockBean
     RequestService requestService;
