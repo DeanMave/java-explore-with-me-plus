@@ -30,6 +30,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             """)
     boolean existsByRequesterIdAndEventId(@Param("requesterId") Long requesterId, @Param("eventId") Long eventId);
 
-    int countByEventId(Long eventId);
+    int countByEvent_Id(Long eventId);
 
 }

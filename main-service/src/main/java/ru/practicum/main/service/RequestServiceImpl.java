@@ -47,6 +47,9 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
+        if (eventId == null) {
+            throw new IllegalArgumentException("параметр eventId обязателен");
+        }
         Event event = getEventById(eventId);
         User user = getUserById(userId);
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
@@ -58,7 +61,7 @@ public class RequestServiceImpl implements RequestService {
         if (event.getState() != Event.EventState.PUBLISHED) {
             throw new ConflictException("нельзя участвовать в неопубликованном событии");
         }
-        if (requestRepository.countByEventId(eventId) >= event.getParticipantLimit()) {
+        if (requestRepository.countByEvent_Id(eventId) >= event.getParticipantLimit() && event.getParticipantLimit() != 0) {
             throw new ConflictException("достигнут лимит запросов на участие");
         }
         Request request = Request
@@ -68,6 +71,9 @@ public class RequestServiceImpl implements RequestService {
                 .created(LocalDateTime.now())
                 .status(event.getRequestModeration() ? Request.RequestStatus.PENDING : Request.RequestStatus.CONFIRMED)
                 .build();
+        if (event.getParticipantLimit() == 0) {
+            request.setStatus(Request.RequestStatus.CONFIRMED);
+        }
         return toParticipationRequestDto(requestRepository.save(request));
     }
 

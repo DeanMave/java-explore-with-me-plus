@@ -88,6 +88,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleIllegalArgument(final IllegalArgumentException exception) {
+        log.warn("illegal argument", exception);
+        return new ApiError(getStackTraceAsList(exception),
+                exception.getMessage(),
+                "передан неверный аргумент",
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleConstraintViolation(ConstraintViolationException e) {
