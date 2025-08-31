@@ -2,7 +2,6 @@ package ru.practicum.main.dto.mappers;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
 import ru.practicum.main.dto.request.event.NewEventDto;
 import ru.practicum.main.dto.response.event.EventFullDto;
 import ru.practicum.main.dto.response.event.EventShortDto;
@@ -10,6 +9,9 @@ import ru.practicum.main.model.Category;
 import ru.practicum.main.model.Event;
 import ru.practicum.main.model.LocationEntity;
 import ru.practicum.main.model.User;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
@@ -25,6 +27,10 @@ public class EventMapper {
                 .title(event.getTitle())
                 // views будет установлен отдельно в сервисе
                 .build();
+    }
+
+    public static Set<EventShortDto> toEventShortDto(Set<Event> events) {
+        return events.stream().map(EventMapper::toEventShortDto).collect(Collectors.toSet());
     }
 
     public static Event toEventFromNewEventDto(NewEventDto newEventDto, User user, Category category, LocationEntity savedLocationEntity) {

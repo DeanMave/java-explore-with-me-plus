@@ -16,4 +16,20 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByIdInAndEventId(List<Long> ids, Long eventId);
 
+
+    @Query("""
+            SELECT r FROM Request r
+            JOIN FETCH r.event
+            WHERE r.requester.id = :requesterId
+            """)
+    List<Request> findAllByRequesterId(@Param("requesterId") Long requesterId);
+
+    @Query("""
+            SELECT COUNT(r) > 0 FROM Request r
+            WHERE r.event.id = :eventId AND r.requester.id = :requesterId
+            """)
+    boolean existsByRequesterIdAndEventId(@Param("requesterId") Long requesterId, @Param("eventId") Long eventId);
+
+    int countByEvent_Id(Long eventId);
+
 }
