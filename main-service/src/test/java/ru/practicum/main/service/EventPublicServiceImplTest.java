@@ -126,7 +126,7 @@ class EventPublicServiceImplTest {
         assertEquals(5, result.get(0).getConfirmedRequests());
 
         verify(eventRepository).findAll(any(Predicate.class), eq(pageable));
-        verify(statClient).getStats(any(), any(), anyList(), eq(false));
+        verify(statClient).getStats(any(), any(), anyList(), eq(true));
         verify(statClient).hit(any(EndpointHitDto.class));
     }
 
@@ -170,7 +170,7 @@ class EventPublicServiceImplTest {
         assertEquals(5, result.getConfirmedRequests());
 
         verify(eventRepository).findByIdAndState(eventId, Event.EventState.PUBLISHED);
-        verify(statClient).getStats(any(), any(), anyList(), eq(false));
+        verify(statClient).getStats(any(), any(), anyList(), eq(true));
         verify(statClient).hit(any(EndpointHitDto.class));
     }
 
