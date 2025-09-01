@@ -61,8 +61,14 @@ public class RequestServiceImpl implements RequestService {
         if (event.getState() != Event.EventState.PUBLISHED) {
             throw new ConflictException("нельзя участвовать в неопубликованном событии");
         }
-        if (requestRepository.countByEvent_Id(eventId) >= event.getParticipantLimit() && event.getParticipantLimit() != 0) {
-            throw new ConflictException("достигнут лимит запросов на участие");
+//        if (requestRepository.countByEvent_Id(eventId) >= event.getParticipantLimit() && event.getParticipantLimit() != 0) {
+//            throw new ConflictException("достигнут лимит запросов на участие");
+//        }
+        if (!event.getRequestModeration()) {
+            int confirmedRequests = requestRepository.countConfirmedRequestsByEventId(eventId);
+            if (confirmedRequests >= event.getParticipantLimit() && event.getParticipantLimit() != 0) {
+                throw new ConflictException("Достигнут лимит подтверждённых участников");
+            }
         }
         Request request = Request
                 .builder()

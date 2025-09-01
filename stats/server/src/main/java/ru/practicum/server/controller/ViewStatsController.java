@@ -15,8 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
-import static org.h2.expression.function.DateTimeFormatFunction.parseDateTime;
-
 @RestController
 @RequestMapping("/stats")
 @RequiredArgsConstructor
@@ -32,6 +30,10 @@ public class ViewStatsController {
         // Декодируем и парсим вручную
         LocalDateTime startDate = parseDateTime(URLDecoder.decode(start, StandardCharsets.UTF_8));
         LocalDateTime endDate = parseDateTime(URLDecoder.decode(end, StandardCharsets.UTF_8));
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Начало не должно быть позже конца");
+        }
 
         return endpointHitService.getStats(startDate, endDate, uris, unique);
     }

@@ -116,7 +116,7 @@ class EventAdminServiceImplTest {
         // Mock statistics
         ViewStatsDto statsDto = new ViewStatsDto("app", "/events/1", 100L);
         ResponseEntity<List<ViewStatsDto>> statsResponse = ResponseEntity.ok(List.of(statsDto));
-        when(statClient.getStats(any(), any(), anyList(), anyBoolean())).thenReturn(statsResponse);
+        when(statClient.getStats(any(), any(), anyList(),eq(true))).thenReturn(statsResponse);
 
         // when
         List<EventFullDto> result = eventAdminService.getEvents(searchDto, pageable);
@@ -128,7 +128,7 @@ class EventAdminServiceImplTest {
         assertEquals(5, result.get(0).getConfirmedRequests());
 
         verify(eventRepository).findAll(any(Predicate.class), eq(pageable));
-        verify(statClient).getStats(any(), any(), anyList(), eq(false));
+        verify(statClient).getStats(any(), any(), anyList(), eq(true));
     }
 
     @Test

@@ -30,11 +30,11 @@ public abstract class AbstractEventService {
                 .map(event -> "/events/" + event.getId())
                 .collect(Collectors.toList());
 
-        LocalDateTime start = LocalDateTime.now().minusYears(1);
+        LocalDateTime start = LocalDateTime.of(2000, 1, 1, 0, 0);
         LocalDateTime end = LocalDateTime.now();
 
         try {
-            ResponseEntity<List<ViewStatsDto>> response = statClient.getStats(start, end, uris, false);
+            ResponseEntity<List<ViewStatsDto>> response = statClient.getStats(start, end, uris, true);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 return response.getBody().stream()
@@ -62,11 +62,11 @@ public abstract class AbstractEventService {
 
     protected Long getEventViews(Long eventId) {
         try {
-            LocalDateTime start = LocalDateTime.now().minusYears(1);
+            LocalDateTime start = LocalDateTime.of(2000, 1, 1, 0, 0);
             LocalDateTime end = LocalDateTime.now();
             List<String> uris = List.of("/events/" + eventId);
 
-            ResponseEntity<List<ViewStatsDto>> response = statClient.getStats(start, end, uris, false);
+            ResponseEntity<List<ViewStatsDto>> response = statClient.getStats(start, end, uris, true);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 return response.getBody().stream()

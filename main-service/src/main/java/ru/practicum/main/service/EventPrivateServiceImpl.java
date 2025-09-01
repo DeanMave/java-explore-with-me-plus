@@ -193,6 +193,7 @@ public class EventPrivateServiceImpl extends AbstractEventService implements Eve
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult updateRequests(UserIdAndEventIdDto userIdAndEventIdDto, EventRequestStatusUpdateRequest updateRequest) {
         Long userId = userIdAndEventIdDto.getUserId();
         Long eventId = userIdAndEventIdDto.getEventId();
