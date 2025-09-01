@@ -28,14 +28,6 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     @Transactional
     public EndpointHitDto save(final EndpointHitDto newEndpointHit) {
         log.debug("сохранение информации о запросе {}", newEndpointHit);
-
-        // Проверяем, был ли уже такой IP + URI
-        if (endpointHitRepository.findByIpAndUri(newEndpointHit.getIp(), newEndpointHit.getUri()).isPresent()) {
-            log.debug("Дубликат IP+URI: {} + {}. Возвращаем DTO без сохранения.",
-                    newEndpointHit.getIp(), newEndpointHit.getUri());
-            return toDto(toEntity(newEndpointHit));
-        }
-
         final EndpointHit endpointHit = toEntity(newEndpointHit);
         return toDto(endpointHitRepository.save(endpointHit));
     }
@@ -48,7 +40,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
         if (unique) {
             log.debug("поиск уникальных запросов");
-            if (uris == null) {
+            if (uris == null || uris.isEmpty()) {
                 return endpointHitRepository.findAllUniqueStats(start, end);
             } else {
                 return endpointHitRepository.findUniqueStatsByUris(uris, start, end);
