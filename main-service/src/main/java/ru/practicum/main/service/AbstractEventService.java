@@ -30,7 +30,7 @@ public abstract class AbstractEventService {
                 .map(event -> "/events/" + event.getId())
                 .collect(Collectors.toList());
 
-        LocalDateTime start = LocalDateTime.now().minusYears(1);
+        LocalDateTime start = LocalDateTime.of(2000, 1, 1, 0, 0);
         LocalDateTime end = LocalDateTime.now();
 
         try {
@@ -62,7 +62,7 @@ public abstract class AbstractEventService {
 
     protected Long getEventViews(Long eventId) {
         try {
-            LocalDateTime start = LocalDateTime.now().minusYears(1);
+            LocalDateTime start = LocalDateTime.of(2000, 1, 1, 0, 0);
             LocalDateTime end = LocalDateTime.now();
             List<String> uris = List.of("/events/" + eventId);
 
