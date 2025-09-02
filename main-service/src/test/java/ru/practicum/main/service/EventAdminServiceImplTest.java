@@ -13,6 +13,7 @@ import ru.practicum.main.dto.request.event.SearchOfEventByAdminDto;
 import ru.practicum.main.dto.request.event.StateAction;
 import ru.practicum.main.dto.request.event.UpdateEventAdminRequest;
 import ru.practicum.main.dto.response.event.EventFullDto;
+import ru.practicum.main.dto.response.request.ConfirmedRequestsCountDto;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.model.*;
 import ru.practicum.main.repository.CategoryRepository;
@@ -111,7 +112,9 @@ class EventAdminServiceImplTest {
         Page<Event> eventPage = new PageImpl<>(List.of(event));
 
         when(eventRepository.findAll(any(Predicate.class), eq(pageable))).thenReturn(eventPage);
-        when(requestRepository.countConfirmedRequestsByEventId(anyLong())).thenReturn(5);
+        ConfirmedRequestsCountDto countDto = new ConfirmedRequestsCountDto(1L, 5L);
+
+        when(requestRepository.countConfirmedRequestsByEventIds(List.of(1L))).thenReturn(List.of(countDto));
 
         // Mock statistics
         ViewStatsDto statsDto = new ViewStatsDto("app", "/events/1", 100L);
