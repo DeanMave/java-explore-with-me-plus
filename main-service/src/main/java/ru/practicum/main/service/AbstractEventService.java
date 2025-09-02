@@ -3,6 +3,7 @@ package ru.practicum.main.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import ru.practicum.main.dto.response.request.ConfirmedRequestsCountDto;
 import ru.practicum.main.model.Event;
 import ru.practicum.main.repository.RequestRepository;
 import ru.practicum.stats.client.StatClient;
@@ -81,10 +82,22 @@ public abstract class AbstractEventService {
     }
 
     protected Map<Long, Integer> getConfirmedRequests(List<Event> events) {
-        return events.stream()
+        if (events.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        List<Long> eventIds = events.stream()
+                .map(Event::getId)
+                .toList();
+        List<ConfirmedRequestsCountDto> results = requestRepository.countConfirmedRequestsByEventIds(eventIds);
+        Map<Long, Long> confirmedRequestsMap = results.stream()
                 .collect(Collectors.toMap(
-                        Event::getId,
-                        event -> requestRepository.countConfirmedRequestsByEventId(event.getId())
+                        ConfirmedRequestsCountDto::getEventId,
+                        ConfirmedRequestsCountDto::getCount
+                ));
+        return eventIds.stream()
+                .collect(Collectors.toMap(
+                        eventId -> eventId,
+                        eventId -> confirmedRequestsMap.getOrDefault(eventId, 0L).intValue()
                 ));
     }
 

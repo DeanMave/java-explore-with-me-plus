@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.main.dto.request.event.SearchOfEventByPublicDto;
 import ru.practicum.main.dto.response.event.EventFullDto;
 import ru.practicum.main.dto.response.event.EventShortDto;
+import ru.practicum.main.dto.response.request.ConfirmedRequestsCountDto;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.exception.ValidationException;
 import ru.practicum.main.model.*;
@@ -108,7 +109,8 @@ class EventPublicServiceImplTest {
         Page<Event> eventPage = new PageImpl<>(List.of(event));
 
         when(eventRepository.findAll(any(Predicate.class), eq(pageable))).thenReturn(eventPage);
-        when(requestRepository.countConfirmedRequestsByEventId(anyLong())).thenReturn(5);
+        ConfirmedRequestsCountDto countDto = new ConfirmedRequestsCountDto(1L, 5L);
+        when(requestRepository.countConfirmedRequestsByEventIds(List.of(1L))).thenReturn(List.of(countDto));
 
         ViewStatsDto statsDto = new ViewStatsDto("app", "/events/1", 100L);
         ResponseEntity<List<ViewStatsDto>> statsResponse = ResponseEntity.ok(List.of(statsDto));

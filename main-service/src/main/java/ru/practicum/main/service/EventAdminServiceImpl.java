@@ -64,18 +64,28 @@ public class EventAdminServiceImpl extends AbstractEventService implements Event
         }
         List<Event> events = eventsPage.getContent();
         Map<Long, Long> views = getEventsViews(events);
+        Map<Long, Integer> confirmedRequests = getConfirmedRequests(events);
         return events.stream()
                 .map(event -> {
                     EventFullDto dto = EventMapper.toEventFullDto(event);
                     dto.setViews(views.getOrDefault(event.getId(), 0L));
-
-                    Integer currentConfirmed = requestRepository.countConfirmedRequestsByEventId(event.getId());
-                    log.debug("Событие {}: confirmedRequests = {}", event.getId(), currentConfirmed);
-                    dto.setConfirmedRequests(currentConfirmed);
-
+                    dto.setConfirmedRequests(confirmedRequests.getOrDefault(event.getId(), 0));
                     return dto;
                 })
                 .collect(Collectors.toList());
+
+//        return events.stream()
+//                .map(event -> {
+//                    EventFullDto dto = EventMapper.toEventFullDto(event);
+//                    dto.setViews(views.getOrDefault(event.getId(), 0L));
+//
+//                    Integer currentConfirmed = requestRepository.countConfirmedRequestsByEventId(event.getId());
+//                    log.debug("Событие {}: confirmedRequests = {}", event.getId(), currentConfirmed);
+//                    dto.setConfirmedRequests(currentConfirmed);
+//
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
     }
 
     @Override

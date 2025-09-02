@@ -1,5 +1,7 @@
 package ru.practicum.main.dto.mappers;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.main.dto.request.compilation.NewCompilationDto;
 import ru.practicum.main.dto.response.compilation.CompilationDto;
 import ru.practicum.main.model.Compilation;
@@ -10,6 +12,7 @@ import java.util.Set;
 
 import static ru.practicum.main.dto.mappers.EventMapper.toEventShortDto;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CompilationMapper {
 
     public static Compilation toEntity(NewCompilationDto newCompilation, Set<Event> events) {
