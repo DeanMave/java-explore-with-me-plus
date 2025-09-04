@@ -1,7 +1,7 @@
 package ru.practicum.server.service;
 
-import dto.EndpointHitDto;
-import dto.ViewStatsDto;
+import ru.practicum.stats.dto.dto.EndpointHitDto;
+import ru.practicum.stats.dto.dto.ViewStatsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
         if (unique) {
             log.debug("поиск уникальных запросов");
-            if (uris == null) {
+            if (uris == null || uris.isEmpty()) {
                 return endpointHitRepository.findAllUniqueStats(start, end);
             } else {
                 return endpointHitRepository.findUniqueStatsByUris(uris, start, end);

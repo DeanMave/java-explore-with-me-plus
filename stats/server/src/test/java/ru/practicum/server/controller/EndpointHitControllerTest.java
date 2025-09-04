@@ -1,7 +1,7 @@
 package ru.practicum.server.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dto.EndpointHitDto;
+import ru.practicum.stats.dto.dto.EndpointHitDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -50,6 +50,6 @@ public class EndpointHitControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(endpointHitDto))
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 }
