@@ -36,8 +36,8 @@ public class CommentPrivateController {
 
     @PatchMapping("/{commentId}")
     public CommentDto updateComment(@PathVariable Long userId,
-                                       @PathVariable Long commentId,
-                                       @Valid @RequestBody NewCommentDto newCommentDto) {
+                                    @PathVariable Long commentId,
+                                    @Valid @RequestBody NewCommentDto newCommentDto) {
         log.info("Обновление комментария {} пользователем {}", commentId, userId);
         return commentPrivateService.updateComment(userId, commentId, newCommentDto);
     }
@@ -45,7 +45,7 @@ public class CommentPrivateController {
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable Long userId,
-                                 @PathVariable Long commentId) {
+                              @PathVariable Long commentId) {
         log.info("Удаление комментария {} пользователем {}", commentId, userId);
         commentPrivateService.deleteComment(userId, commentId);
     }

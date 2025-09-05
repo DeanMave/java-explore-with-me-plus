@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface CommentAdminService {
     void deleteComment(Long commentId);
+
     List<CommentDto> getComments(SearchOfCommentByAdminDto searchDto, Pageable pageable);
 }
