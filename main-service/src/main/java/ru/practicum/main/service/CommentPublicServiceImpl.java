@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.dto.mappers.CommentMapper;
 import ru.practicum.main.dto.response.comment.CommentDto;
 import ru.practicum.main.repository.CommentRepository;
