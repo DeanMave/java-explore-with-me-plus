@@ -27,7 +27,7 @@ import static ru.practicum.main.dto.mappers.CommentMapper.toDto;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class CommentPrivateServiceImpl implements CommentPrivateService {
 
     private final CommentRepository commentRepository;

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
+@Transactional (readOnly = true)
 public class CommentAdminServiceImpl implements CommentAdminService {
 
     private final CommentRepository commentRepository;
